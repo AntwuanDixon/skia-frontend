@@ -4,6 +4,10 @@
   "private": true,
   "dependencies": {
     "@acala-network/api": "^2.3.1",
+    "@emotion/react": "^11.4.1",
+    "@emotion/styled": "^11.3.0",
+    "@mui/icons-material": "^5.0.3",
+    "@mui/material": "^5.0.3",
     "@polkadot/api": "^6.2.1",
     "@polkadot/keyring": "^7.4.1",
     "@polkadot/rpc-provider": "^6.2.1",
