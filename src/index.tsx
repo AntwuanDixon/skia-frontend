@@ -4,11 +4,16 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { initWsConnection } from "./utils";
+import { ThemeProvider } from '@mui/material/styles';
+import { theme } from './theme'
+
 
 initWsConnection().then((api) => {
   ReactDOM.render(
     <React.StrictMode>
+      <ThemeProvider theme={theme}>
       <App api={api} />
+      </ThemeProvider>
     </React.StrictMode>,
     document.getElementById("root")
   );
