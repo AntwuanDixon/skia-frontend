@@ -3,12 +3,23 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import Accordion from "./StakingInfo";
+import StakingInfo from "./StakingInfo";
+import { BalanceDict } from "../utils/balances";
+import { ApiPromise } from "@polkadot/api";
 
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
+}
+
+
+interface BalancesContainerProps {
+  api: ApiPromise;
+  tokens: Array<string>;
+  // address?: string;
+  // prices: PriceDict;
+  balances: BalanceDict;
 }
 
 function TabPanel(props: TabPanelProps) {
@@ -38,39 +49,55 @@ function a11yProps(index: number) {
   };
 }
 
-const headers = [["KSM-LKSM Staked", 'Avg. APR', "Interest"], ["KSM-KAR Staked", 'Avg. APR', "Interest"], ["KSM-KUSD Staked", 'Avg. APR', "Interest"]]
-const stats = [["1.13", '11%', "0.12"],["2.31", '14%', "0.58"],["0.91", '9%', "0.08"]]
+const headers = [
+  ["Staked", "Avg. APR", "Interest"],
+  ["Staked", "Avg. APR", "Interest"],
+  ["Staked", "Avg. APR", "Interest"],
+];
+const stats = [
+  ["1.13", "11%", "0.12"],
+  ["2.31", "14%", "0.58"],
+  ["0.91", "9%", "0.08"],
+];
 
-export default function BasicTabs() {
+const BalancesContainer = ({tokens, balances, api}: BalancesContainerProps) => {
+
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+  console.log(balances)
 
   return (
-    <Box sx={{ width: "100%" }}>
-      <Box sx={{ borderBottom: '.5rem', borderColor: "divider" }}>
+    <Box sx={{ width: 650 }}>
+      <Box sx={{ borderBottom: ".5rem", borderColor: "divider", display: 'flex', justifyContent: 'center' }}>
         <Tabs
           value={value}
           onChange={handleChange}
-          aria-label="basic tabs example"
-          centered
+          variant="scrollable"
+          scrollButtons="auto"
+          aria-label="scrollable auto tabs example"
         >
-          <Tab label="LKSM" {...a11yProps(0)} />
-          <Tab label="KAR" {...a11yProps(1)} />
-          <Tab label="KUSD" {...a11yProps(2)} />
+          {tokens.map((token, index) => (
+          <Tab label={token} {...a11yProps(index)} />
+          ))}
         </Tabs>
       </Box>
-      <TabPanel value={value} index={0} >
-        <Accordion headers={headers[0]} stats={stats[0]}/>
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <Accordion headers={headers[1]} stats={stats[1]}/>
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        <Accordion headers={headers[2]} stats={stats[2]}/>
-      </TabPanel>
+      {tokens.map((token, index) => (
+        <TabPanel value={value} index={index}>
+          <StakingInfo
+            headers={headers[0]}
+            stats={stats[0]}
+            key={`balance-panel-${token}`}
+            token={token}
+            balance={balances[index]}
+            // price={prices[index]}
+          />
+        </TabPanel>
+      ))}
     </Box>
   );
-}
+};
+
+export default BalancesContainer
