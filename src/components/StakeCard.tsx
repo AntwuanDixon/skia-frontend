@@ -52,7 +52,7 @@ function StakeCard(): ReactElement {
         <Box
           component="form"
           sx={{
-            "& > :not(style)": { m: 0.5, width: "15ch", padding: ".2rem" },
+            "& > :not(style)": { m: 0.3, width: "8ch", padding: ".2rem" },
           }}
           noValidate
           autoComplete="off"
