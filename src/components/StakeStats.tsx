@@ -1,16 +1,20 @@
 import { Box, Divider, Paper, Typography } from "@mui/material";
 import { ReactElement } from "react";
 
-interface Props {
-    headers: string[]
-    stats: string[]
+interface BalancePanelProps {
+  token: string;
+  balance: bigint;
+  // price: bigint;
+  headers: string[]
+  stats: string[]
 }
 
-function StakeStats({headers, stats}: Props): ReactElement {
+function StakeStats({token, balance, headers, stats}: BalancePanelProps): ReactElement {
+  const balanceString = balance ? balance.toString() : 0
   return (
     <Box
       sx={{
-        width: "32rem",
+        width: "100%",
         height: "100%",
         backgroundColor: "#121212",
         borderRadius: "2rem",
@@ -19,8 +23,17 @@ function StakeStats({headers, stats}: Props): ReactElement {
     >
       <Paper elevation={1} >
         <Box sx={{ display: "flex", flexDirection: "row", padding: ".4rem" }}>
+        <Box
+            sx={{ display: "flex", flexDirection: "column", padding: "0rem", width: '30%' }}
+          >
+            <Typography sx={{ flexShrink: 0 }}>{token}</Typography>
+            <Typography sx={{ flexShrink: 0, color: "text.secondary", marginTop: '.2rem' }}>
+             {balanceString}
+            </Typography>
+          </Box>
+          <Divider orientation="vertical" flexItem />
           <Box
-            sx={{ display: "flex", flexDirection: "column", padding: "0rem", width: '50%' }}
+            sx={{ display: "flex", flexDirection: "column", padding: "0rem", width: '30%' }}
           >
             <Typography sx={{ flexShrink: 0 }}>{headers[0]}</Typography>
             <Typography sx={{ flexShrink: 0, color: "text.secondary", marginTop: '.2rem' }}>
@@ -29,7 +42,7 @@ function StakeStats({headers, stats}: Props): ReactElement {
           </Box>
           <Divider orientation="vertical" flexItem />
           <Box
-            sx={{ display: "flex", flexDirection: "column", padding: "0rem",  width: '40%' }}
+            sx={{ display: "flex", flexDirection: "column", padding: "0rem",  width: '30%' }}
           >
             <Typography sx={{ flexShrink: 0 }}>{headers[1]}</Typography>
             <Typography sx={{ flexShrink: 0, color: "text.secondary", marginTop: '.2rem' }}>
