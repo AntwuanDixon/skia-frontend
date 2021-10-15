@@ -4,8 +4,8 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import StakingInfo from "./StakingInfo";
-import { BalanceDict } from "../utils/balances";
-import { ApiPromise } from "@polkadot/api";
+import { useContext } from "react";
+import { AppContext } from "../App";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -13,14 +13,8 @@ interface TabPanelProps {
   value: number;
 }
 
-
 interface BalancesContainerProps {
-  api: ApiPromise;
-  tokens: Array<string>;
   setToken: (activeTab: any) => void;
-  // address?: string;
-  // prices: PriceDict;
-  balances: BalanceDict;
 }
 
 function TabPanel(props: TabPanelProps) {
@@ -61,18 +55,26 @@ const stats = [
   ["0.91", "9%", "0.08"],
 ];
 
-const BalancesContainer = ({setToken, tokens, balances, api}: BalancesContainerProps) => {
-
+const BalancesContainer = ({ setToken }: BalancesContainerProps) => {
+  const { state, dispatch } = useContext(AppContext) as AppContextType;
+  const { balances } = state[0];
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setToken(newValue)
+    setToken(newValue);
     setValue(newValue);
   };
 
   return (
     <Box sx={{ width: 650 }}>
-      <Box sx={{ borderBottom: ".5rem", borderColor: "divider", display: 'flex', justifyContent: 'center' }}>
+      <Box
+        sx={{
+          borderBottom: ".5rem",
+          borderColor: "divider",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
         <Tabs
           value={value}
           onChange={handleChange}
@@ -80,19 +82,19 @@ const BalancesContainer = ({setToken, tokens, balances, api}: BalancesContainerP
           scrollButtons="auto"
           aria-label="scrollable auto tabs example"
         >
-          {tokens.map((token, index) => (
-          <Tab label={token} {...a11yProps(index)} />
+          {Object.keys(balances).map((token, index) => (
+            <Tab label={token} {...a11yProps(index)} />
           ))}
         </Tabs>
       </Box>
-      {tokens.map((token, index) => (
+      {Object.keys(balances).map((token, index) => (
         <TabPanel value={value} index={index}>
           <StakingInfo
             headers={headers[0]}
             stats={stats[0]}
             key={`balance-panel-${token}`}
             token={token}
-            balance={balances[index]}
+            balance={balances[token]}
             // price={prices[index]}
           />
         </TabPanel>
@@ -101,4 +103,4 @@ const BalancesContainer = ({setToken, tokens, balances, api}: BalancesContainerP
   );
 };
 
-export default BalancesContainer
+export default BalancesContainer;

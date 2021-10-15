@@ -1,6 +1,6 @@
 import React from "react";
-import { PriceDict, getPrices } from "../utils/prices";
-import { BalanceDict, LpSpec, getBalances } from "../utils/balances";
+import { getBalances } from "../utils/balances";
+import { getPrices } from "../utils/prices";
 import AddressInput from "./AddressInput";
 import BalancePanel from "./BalancePanel";
 import { isKaruraAddress } from "../utils";
