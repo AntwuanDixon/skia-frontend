@@ -1,12 +1,11 @@
 import { Box, Container } from "@mui/material";
 import { ReactElement, useState } from "react";
-import { BalancesContainer } from "./BalancesContainer";
 import AddressInput from "./AddressInput";
 import { getBalances } from "../utils/balances";
 import { ApiPromise } from "@polkadot/api";
-import StakeCard from "./StakeCard";
 import TabPanel from "./TabPanel";
 import { isKaruraAddress } from "../utils";
+import StakeKSMForm from "./StakeKSMForm";
 
 export type BalanceDict = Record<string, bigint>;
 export type BalanceList = Array<{ token: string; balance: bigint }>;
@@ -26,6 +25,8 @@ function MainCard({ api }: Props): ReactElement {
   const [statusMsg, setStatusMsg] = useState("");
   const [balances, setBalances] = useState<BalanceDict>({});
   const [tokens, setTokens] = useState(["KAR", "KSM", "KUSD", "LKSM"]);
+  const [activeToken, setActiveToken] = useState(tokens[0])
+  const [address, setAddress] = useState("")
 
   const handleAddressInput = async (address: string) => {
     setStatusMsg(
@@ -36,6 +37,7 @@ function MainCard({ api }: Props): ReactElement {
       setBalances(balances);
       const sortedTokens = Object.keys(balances).sort();
       setTokens(sortedTokens);
+      setAddress(address)
       return { balances, sortedTokens };
     } catch (err) {
       const statusMessage = `Querying failed!)`;
@@ -43,6 +45,10 @@ function MainCard({ api }: Props): ReactElement {
       return null;
     }
   };
+
+  const setToken = (activeTab) => {
+    setActiveToken(tokens[activeTab])
+  }
 
   return (
     <Container maxWidth="lg">
@@ -69,7 +75,7 @@ function MainCard({ api }: Props): ReactElement {
             width: "35%",
           }}
         >
-          <StakeCard />
+          <StakeKSMForm api={api} address={address} activeToken={activeToken} tokens={tokens} balances={balances}/>
         </Box>
 
         <Box
@@ -81,7 +87,7 @@ function MainCard({ api }: Props): ReactElement {
             alignItems: "center",
           }}
         >
-          {tokens[0] !== "" ? (<TabPanel tokens={tokens} balances={balances} api={api} />) : null}
+          {tokens[0] !== "" ? (<TabPanel setToken={setToken} tokens={tokens} balances={balances} api={api} />) : null}
           
         </Box>
       </Box>
