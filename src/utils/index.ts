@@ -7,9 +7,10 @@ import { options as acalaOptions } from "@acala-network/api";
 
 // ---------------------- direct WebSocket connection ----------------------- //
 const KARURA_WS_ENDPOINT = "wss://karura.api.onfinality.io/public-ws";
+const MANDALA_WS_ENDPOINT = "wss://acala-mandala.api.onfinality.io/public-ws"
 
 export async function initWsConnection(endpoint?: string): Promise<ApiPromise> {
-  endpoint = endpoint || KARURA_WS_ENDPOINT;
+  endpoint = endpoint || MANDALA_WS_ENDPOINT;
 
   const provider = new WsProvider(endpoint);
   const api = new ApiPromise(acalaOptions({ provider }) as ApiOptions);
