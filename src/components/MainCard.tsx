@@ -1,32 +1,18 @@
 import { Box, Container } from "@mui/material";
-import { ReactElement, useState } from "react";
+import { ReactElement, useContext, useState } from "react";
 import AddressInput from "./AddressInput";
 import { getBalances } from "../utils/balances";
-import { ApiPromise } from "@polkadot/api";
 import TabPanel from "./TabPanel";
 import { isKaruraAddress } from "../utils";
-import StakeKSMForm from "./StakeKSMForm";
+import StakeKSMForm from "./Forms/StakeKSMForm";
+import { AppContext, ApiContext } from "../App";
+import { tokens, lpSpecs } from "../utils/tokens";
 
-export type BalanceDict = Record<string, bigint>;
-export type BalanceList = Array<{ token: string; balance: bigint }>;
-export type LpSpec = [string, string];
-
-interface Props {
-  api: ApiPromise;
-}
-
-const lpSpecs: Array<LpSpec> = [
-  ["KSM", "LKSM"],
-  ["KUSD", "KSM"],
-  ["KAR", "KSM"],
-];
-
-function MainCard({ api }: Props): ReactElement {
+function MainCard(): ReactElement {
   const [statusMsg, setStatusMsg] = useState("");
-  const [balances, setBalances] = useState<BalanceDict>({});
-  const [tokens, setTokens] = useState(["KAR", "KSM", "KUSD", "LKSM"]);
   const [activeToken, setActiveToken] = useState(tokens[0])
-  const [address, setAddress] = useState("")
+  const {state, dispatch} = useContext(AppContext) as AppContextType;
+  const [api] = useContext(ApiContext);
 
   const handleAddressInput = async (address: string) => {
     setStatusMsg(
@@ -34,15 +20,10 @@ function MainCard({ api }: Props): ReactElement {
     );
     try {
       const balances = await getBalances(address, { tokens, lpSpecs, api });
-      setBalances(balances);
-      const sortedTokens = Object.keys(balances).sort();
-      setTokens(sortedTokens);
-      setAddress(address)
-      return { balances, sortedTokens };
+      dispatch({ type: "NEW_ACCOUNT", payload: {balances, address}});
     } catch (err) {
-      const statusMessage = `Querying failed!)`;
+      const statusMessage = `Querying failed!`;
       setStatusMsg(statusMessage);
-      return null;
     }
   };
 
@@ -75,7 +56,7 @@ function MainCard({ api }: Props): ReactElement {
             width: "35%",
           }}
         >
-          <StakeKSMForm api={api} address={address} activeToken={activeToken} tokens={tokens} balances={balances}/>
+          <StakeKSMForm activeToken={activeToken}/>
         </Box>
 
         <Box
@@ -87,7 +68,7 @@ function MainCard({ api }: Props): ReactElement {
             alignItems: "center",
           }}
         >
-          {tokens[0] !== "" ? (<TabPanel setToken={setToken} tokens={tokens} balances={balances} api={api} />) : null}
+          {state[0] ? (<TabPanel setToken={setToken} />) : null}
           
         </Box>
       </Box>
