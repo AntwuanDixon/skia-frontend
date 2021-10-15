@@ -1,19 +1,3 @@
-import { ApiPromise } from "@polkadot/api";
-
-export type BalanceDict = Record<string, bigint>;
-export type BalanceList = Array<{ token: string; balance: bigint }>;
-export type LpSpec = [string, string];
-
-interface GetTokenBalancesOptions {
-  api: ApiPromise;
-  tokens: Array<string>;
-}
-
-interface BalanceComponents {
-  free: number;
-  frozen: number;
-  reserved: number;
-}
 
 async function getTokenBalances(
   address: String,
@@ -22,18 +6,15 @@ async function getTokenBalances(
   const balances: BalanceDict = {};
   await Promise.all(
     tokens.map(async (token) => {
-      const data = await api.query.tokens.accounts(address, { token });
+
+      const data = await api.query.tokens.accounts(address, {token});
+      console.log(token, data.toHuman())
       const { free, frozen, reserved } =
         data.toJSON() as unknown as BalanceComponents;
       balances[token] = BigInt(free) + BigInt(frozen) + BigInt(reserved);
     })
   );
   return balances;
-}
-
-interface GetLpSharesOptions {
-  api: ApiPromise;
-  lpSpecs: Array<LpSpec>;
 }
 
 async function getLpShares(
@@ -44,8 +25,9 @@ async function getLpShares(
   await Promise.all(
     lpSpecs.map(async ([tokenA, tokenB]) => {
       const data = await api.query.tokens.accounts(address, {
-        dexShare: [{ token: tokenA }, { token: tokenB }],
+        dexShare: [{ 'ACA': tokenA }, { 'KAR': tokenB }],
       });
+      console.log('dex data', data)
       const { free, frozen, reserved } =
         data.toJSON() as unknown as BalanceComponents;
       shares[`lp://${tokenA}/${tokenB}`] =

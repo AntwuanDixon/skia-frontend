@@ -4,9 +4,6 @@ export const E6 = BigInt("1" + "0".repeat(6));
 export const E12 = BigInt("1" + "0".repeat(12));
 export const E18 = BigInt("1" + "0".repeat(18));
 
-export type PriceDict = Record<string, bigint>;
-export type PriceList = Array<{ token: string; quote: string; price: bigint }>;
-
 async function getPrice(
   api: ApiPromise,
   target: string,
