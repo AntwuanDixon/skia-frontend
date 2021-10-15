@@ -6,14 +6,13 @@ import {
   FormControl,
   Typography,
 } from "@mui/material";
-import React, { ReactElement, useEffect, useState } from "react";
-import formInitialValues from "../utils/FormModel/FormInitialValues";
-import PostFormModel, { formTypes } from "../utils/FormModel/PostFormModel";
-import validationSchema from "../utils/FormModel/ValidationSchema";
-import InputField from "./Fields/InputField";
-import { BalanceDict } from "./MainCard";
-import { ApiPromise } from "@polkadot/api";
-import { getMintFee, mintLKSM } from "../utils/liquidStake";
+import React, { ReactElement, useContext, useEffect, useState } from "react";
+import formInitialValues from "../../utils/FormModel/FormInitialValues";
+import PostFormModel, { formTypes } from "../../utils/FormModel/PostFormModel";
+import validationSchema from "../../utils/FormModel/ValidationSchema";
+import InputField from "../Fields/InputField";
+import { getMintFee, mintLKSM } from "../../utils/liquidStake";
+import { ApiContext, AppContext } from "../../App";
 
 interface FormValues {
   [x: string]: any;
@@ -21,26 +20,21 @@ interface FormValues {
 
 interface StakeFormProps {
   activeToken: string;
-  tokens: string[];
-  balances: BalanceDict;
-  api: ApiPromise;
-  address: string;
 }
 
 const { formId, formField } = PostFormModel;
 
 const StakeKSMForm: React.FC<StakeFormProps> = ({
-  api,
-  address,
   activeToken,
-  tokens,
-  balances,
 }): ReactElement => {
   const { stakeAmount } = formField;
   const [formValues, setFormValues] = useState<FormValues>(formInitialValues);
   const [error, setError] = useState("");
   const [mintFee, setMintFee] = useState("0.00");
   const [mintAmount, setMintAmount] = useState(0)
+  const [api] = useContext(ApiContext);
+  const {state} = useContext(AppContext);
+  
   useEffect(() => {
     (async () => {
       try {
@@ -54,7 +48,7 @@ const StakeKSMForm: React.FC<StakeFormProps> = ({
 
   const _submitForm = async (values: FormValues): Promise<void> => {
     console.log(values);
-    const hash = await mintLKSM(address, api, values.stakeAmount);
+    await mintLKSM(state[0].address, api, values.stakeAmount);
   };
 
   function _handleSubmit(e) {
