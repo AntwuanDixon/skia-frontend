@@ -17,6 +17,7 @@ interface TabPanelProps {
 interface BalancesContainerProps {
   api: ApiPromise;
   tokens: Array<string>;
+  setToken: (activeTab: any) => void;
   // address?: string;
   // prices: PriceDict;
   balances: BalanceDict;
@@ -60,14 +61,14 @@ const stats = [
   ["0.91", "9%", "0.08"],
 ];
 
-const BalancesContainer = ({tokens, balances, api}: BalancesContainerProps) => {
+const BalancesContainer = ({setToken, tokens, balances, api}: BalancesContainerProps) => {
 
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setToken(newValue)
     setValue(newValue);
   };
-  console.log(balances)
 
   return (
     <Box sx={{ width: 650 }}>
